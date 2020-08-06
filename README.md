@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
@@ -24,7 +23,3 @@
 * [Contributing](#contributing)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
-
-=======
-# pred_model
->>>>>>> 520fc5243767f74c7587f0abf081a91f54866541
