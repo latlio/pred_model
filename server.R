@@ -9,6 +9,7 @@ library(shiny)
 library(shinydashboard)
 source("ui.R")
 source("src/fit_model.R")
+fit <- readRDS("model.RDS")
 
 server <- function(input, output) {
   
