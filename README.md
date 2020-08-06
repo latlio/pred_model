@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a href="https://www.github.com/latlio/mphil-thesis">
-    <img src= "cambridge-logo.png" width="80" height="100">
+    <img src= "www/cambridge-logo.png" width="80" height="100">
   </a>
 
   <h3 align="center">Prediction Model Shiny App </h3>
