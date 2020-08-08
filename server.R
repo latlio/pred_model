@@ -11,12 +11,30 @@ source("ui.R")
 source("src/fit_model.R")
 fit <- readRDS("model.RDS")
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   
-  output$pred <- renderPrint({
-    req(input$bmi,
-        input$age,
-        cancelOutput = T)
+  text_to_display <- reactiveVal("Complete all fields!")
+  
+  observeEvent(input$reset, {
+    updateSliderInput(session, 'prs', value = 0)
+    updateSelectInput(session, 'hormone')
+    updateTextInput(session, 'bmi', value = "")
+    updateSelectInput(session, 'smoking')
+    updateSelectInput(session, 'alc')
+    updateTextInput(session, 'age', value = "")
+    updateSliderInput(session, 'imd', value = 1)
+  })
+               
+  pred <- eventReactive(input$go, {
+    # req(input$bmi,
+    #     input$age,
+    #     cancelOutput = T)
+    validate(
+      need(input$bmi, "Input a BMI!"),
+      need(input$age, "Input an age!"),
+      need(str_detect(input$bmi, "[a-zA-Z]*"), "Input a number for BMI!"),
+      need(str_detect(input$age, "[a-zA-Z]*"), "Input a number for age!")
+    )
     newdata <- tibble(prs_z = input$prs,
                       HormoneTherapy = input$hormone,
                       BMI = input$bmi,
@@ -39,9 +57,11 @@ server <- function(input, output) {
       )) %>%
       mutate_all(as.numeric)
     pred <- predict(fit, newdata = newdata, type = "risk")
-    pred[[1]]
   })
-  
+  output$pred <- renderText(ifelse(is.na(pred()), 
+                                   print("Make sure age and BMI are numbers."), 
+                                   pred()))
 }
 
+enableBookmarking("url")
 shinyApp(ui, server)
