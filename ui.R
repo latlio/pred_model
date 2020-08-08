@@ -15,12 +15,19 @@ header <- dashboardHeader(title = "Demo Predictor",
                                     style = "padding-top:10px; padding-bottom:10px;"),
                                   class = "dropdown"))
 
+#HTML styling
 convertMenuItem <- function(mi,tabName) {
   mi$children[[1]]$attribs['data-toggle'] = "tab"
   mi$children[[1]]$attribs['data-value'] = "tabName"
   mi
 }
-
+buttonInputRow <- function (inputId, label) 
+{
+  div(style="display:inline-block",
+      tags$label(label, `for` = inputId), 
+      tags$input(id = inputId, type = "button",
+                 class = "btn btn-default action-button"))
+}
 sidebar <- dashboardSidebar(
   sidebarMenu(
     convertMenuItem(menuItem("Predict!", tabName = "model", icon = icon("bar-chart-o"),
@@ -46,7 +53,9 @@ sidebar <- dashboardSidebar(
                                          "IMD Score",
                                          value = 1,
                                          min = 1,
-                                         max = 15)
+                                         max = 15),
+                             actionButton("go", "Predict!"),
+                             actionButton("reset", "Clear")
     )),
     menuItem("Source Code", icon = icon("file-code-o"),
              href = "https://github.com/latlio/pred_model")
@@ -57,7 +66,12 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "model",
             h2("Your predicted risk is: "),
-            box(verbatimTextOutput("pred")),
+            box(verbatimTextOutput("pred", placeholder = T)),
+            br(),
+            br(),
+            br(),
+            br(),
+            br(),
             br(),
             br(),
             br(),
