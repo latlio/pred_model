@@ -5,9 +5,6 @@
 # Created: Wed Aug  5 15:35:47 2020 ------------------------------
 ################################################################################
 
-library(shiny)
-library(shinydashboard)
-
 header <- dashboardHeader(title = "Demo Predictor",
                           tags$li(a(href = 'https://www.phpc.cam.ac.uk/ceu/',
                                     img(src = 'www/cambridge-logo.png',
@@ -21,23 +18,40 @@ convertMenuItem <- function(mi,tabName) {
   mi$children[[1]]$attribs['data-value'] = "tabName"
   mi
 }
-buttonInputRow <- function (inputId, label) 
-{
-  div(style="display:inline-block",
-      tags$label(label, `for` = inputId), 
-      tags$input(id = inputId, type = "button",
-                 class = "btn btn-default action-button"))
+hoverIcon <- function(title) {
+  quo(
+  tags$style(
+    class = "fa fa-info-circle", 
+    `data-toggle` = "tooltip",
+    `data-placement` = "right",
+    `title` = title
+  )
+  )
 }
+
+# {
+#   div(style="display:inline-block",
+#       tags$label(label, `for` = inputId), 
+#       tags$input(id = inputId, type = "button",
+#                  class = "btn btn-default action-button"))
+# }
 sidebar <- dashboardSidebar(
   sidebarMenu(
     convertMenuItem(menuItem("Predict!", tabName = "model", icon = icon("bar-chart-o"),
+                             rlang::eval_tidy(
+                               hoverIcon("Standardized coronary artery disease polygenic risk score.")
+                               ),
                              sliderInput("prs",
-                                         "Standardized PRS", 
+                                        "Standardized PRS", 
                                          value = 0,
                                          min = -4,
-                                         max = 4),
+                                         max = 4
+                                         ),
+                             rlang::eval_tidy(
+                               hoverIcon("Have you received tamoxifen in the past?")
+                             ),
                              selectInput("hormone",
-                                         "Received hormone therapy?",
+                                         "Received anti-hormone therapy?",
                                          c("No", "Yes")),
                              textInput("bmi",
                                        "BMI"),
@@ -45,17 +59,25 @@ sidebar <- dashboardSidebar(
                                          "Smoking status",
                                          c("Never", "Past", "Current")),
                              selectInput("alc",
-                                         "Currently drinking",
+                                         "Currently drinking?",
                                          c("No", "Yes")),
+                             rlang::eval_tidy(
+                               hoverIcon("The age when you received your first breast cancer diagnosis.")
+                             ),
                              textInput("age",
                                        "Age at diagnosis"),
+                             rlang::eval_tidy(
+                               hoverIcon("What is your zipcode?")
+                             ),
                              sliderInput("imd",
                                          "IMD Score",
                                          value = 1,
                                          min = 1,
                                          max = 15),
-                             actionButton("go", "Predict!"),
-                             actionButton("reset", "Clear")
+                             div(style="display: inline-block;vertical-align:top; width: 100px;",
+                                 actionButton("go", "Predict!")),
+                             div(style="display: inline-block;vertical-align:top; width: 100px;",
+                                 actionButton("reset", "Clear", style='padding:6px;width:80px'))
     )),
     menuItem("Source Code", icon = icon("file-code-o"),
              href = "https://github.com/latlio/pred_model")
@@ -107,4 +129,4 @@ body <- dashboardBody(
     )
   )
 )
-ui <- dashboardPage(header, sidebar, body)
+ui <- dashboardPage(header, sidebar, body, useShinyjs())
