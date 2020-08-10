@@ -7,14 +7,14 @@
 
 library(shiny)
 library(shinydashboard)
+library(shinyjs)
 source("ui.R")
 source("src/fit_model.R")
 fit <- readRDS("model.RDS")
 
 server <- function(input, output, session) {
   
-  text_to_display <- reactiveVal("Complete all fields!")
-  
+  #reset
   observeEvent(input$reset, {
     updateSliderInput(session, 'prs', value = 0)
     updateSelectInput(session, 'hormone')
@@ -23,6 +23,15 @@ server <- function(input, output, session) {
     updateSelectInput(session, 'alc')
     updateTextInput(session, 'age', value = "")
     updateSliderInput(session, 'imd', value = 1)
+  })
+  
+  #disable predict button
+  observe({
+    if (input$age == "" || input$bmi == "") {
+      shinyjs::disable("go")
+    } else {
+      shinyjs::enable("go")
+    }
   })
                
   pred <- eventReactive(input$go, {
