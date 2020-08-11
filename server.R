@@ -5,15 +5,8 @@
 # Created: Wed Aug 5 15:14:42 2020 ------------------------------
 ################################################################################
 
-library(shiny)
-library(shinydashboard)
-library(shinyjs)
-source("ui.R")
-source("src/fit_model.R")
-fit <- readRDS("model.RDS")
-
 server <- function(input, output, session) {
-  
+
   #reset
   observeEvent(input$reset, {
     updateSliderInput(session, 'prs', value = 0)
@@ -66,11 +59,18 @@ server <- function(input, output, session) {
       )) %>%
       mutate_all(as.numeric)
     pred <- predict(fit, newdata = newdata, type = "risk")
+    pred <- round(pred, 2)
+    paste0(pred)
   })
   output$pred <- renderText(ifelse(is.na(pred()), 
                                    print("Make sure age and BMI are numbers."), 
                                    pred()))
+  output$gauge = renderGauge({
+    gauge(pred(), 
+          min = 0, 
+          max = 4, 
+          sectors = gaugeSectors(success = c(0, 1), 
+                                 warning = c(1, 2),
+                                 danger = c(2, 4)))
+  })
 }
-
-enableBookmarking("url")
-shinyApp(ui, server)
