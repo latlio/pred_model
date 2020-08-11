@@ -29,29 +29,29 @@ hoverIcon <- function(title) {
   )
 }
 
-# {
-#   div(style="display:inline-block",
-#       tags$label(label, `for` = inputId), 
-#       tags$input(id = inputId, type = "button",
-#                  class = "btn btn-default action-button"))
-# }
+resetUI <- function(id){
+  tagList(
+    actionButton(NS(id, "reset"), "Clear", style='padding:6px;width:80px')
+  )
+}
+
 sidebar <- dashboardSidebar(
   sidebarMenu(
     convertMenuItem(menuItem("Predict!", tabName = "model", icon = icon("bar-chart-o"),
-                             rlang::eval_tidy(
-                               hoverIcon("Standardized coronary artery disease polygenic risk score.")
-                               ),
                              sliderInput("prs",
-                                        "Standardized PRS", 
+                                        list(icon = rlang::eval_tidy(
+                                          hoverIcon("Standardized coronary artery disease polygenic risk score.")
+                                        ),
+                                        "Standardized PRS"),
                                          value = 0,
                                          min = -4,
                                          max = 4
                                          ),
-                             rlang::eval_tidy(
-                               hoverIcon("Have you received tamoxifen in the past?")
-                             ),
                              selectInput("hormone",
-                                         "Received anti-hormone therapy?",
+                                         list(icon = rlang::eval_tidy(
+                                           hoverIcon("Have you received tamoxifen in the past?")
+                                         ),
+                                         "Received anti-hormone therapy?"),
                                          c("No", "Yes")),
                              textInput("bmi",
                                        "BMI"),
@@ -61,23 +61,23 @@ sidebar <- dashboardSidebar(
                              selectInput("alc",
                                          "Currently drinking?",
                                          c("No", "Yes")),
-                             rlang::eval_tidy(
-                               hoverIcon("The age when you received your first breast cancer diagnosis.")
-                             ),
                              textInput("age",
-                                       "Age at diagnosis"),
-                             rlang::eval_tidy(
-                               hoverIcon("What is your zipcode?")
-                             ),
+                                       list(icon = rlang::eval_tidy(
+                                         hoverIcon("The age when you received your first breast cancer diagnosis.")
+                                       ),
+                                       "Age at diagnosis")),
                              sliderInput("imd",
-                                         "IMD Score",
+                                         list(icon = rlang::eval_tidy(
+                                           hoverIcon("What is your zipcode?")
+                                         ),
+                                         "IMD Score"),
                                          value = 1,
                                          min = 1,
                                          max = 15),
                              div(style="display: inline-block;vertical-align:top; width: 100px;",
                                  actionButton("go", "Predict!")),
                              div(style="display: inline-block;vertical-align:top; width: 100px;",
-                                 actionButton("reset", "Clear", style='padding:6px;width:80px'))
+                                 resetUI("test"))
     )),
     menuItem("Source Code", icon = icon("file-code-o"),
              href = "https://github.com/latlio/pred_model")
@@ -88,7 +88,14 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "model",
             h2("Your predicted risk is: "),
-            box(verbatimTextOutput("pred", placeholder = T)),
+            h3(verbatimTextOutput("pred", placeholder = T)),
+            tags$head(tags$style("#pred{color: black;
+                                 font-size: 20px;
+                                 font-family: Source Sans Pro
+                                 }"
+            )
+            ),
+            flexdashboard::gaugeOutput("gauge"),
             br(),
             br(),
             br(),
@@ -129,4 +136,11 @@ body <- dashboardBody(
     )
   )
 )
-ui <- dashboardPage(header, sidebar, body, useShinyjs())
+ui <- dashboardPage(header, 
+                    sidebar, 
+                    body, 
+                    useShinyjs()
+                    )
+
+
+
