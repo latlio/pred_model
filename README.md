@@ -24,9 +24,11 @@
 ## About The Project
 This is a Shiny interface intended to demonstrate how to set up a Shiny app prediction model. The dataset this model is built on is a prospective cohort of UK women with breast cancer. The model predicts the relative risk of coronary artery disease compared to an individual who has mean values for each covariate. 
 
+<img src = "www/app_demo.png">
+
 <!-- DEPLOYMENT -->
 ## Deployment
-The app is deployed through RStudio's webservice shinyapps.io. 
+The app is (currently not yet) deployed through RStudio's webservice shinyapps.io. 
 
 <!-- CONTRIBUTING -->
 ## Contributing
