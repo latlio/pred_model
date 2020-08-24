@@ -26,7 +26,32 @@ server <- function(input, output, session) {
       shinyjs::enable("go")
     }
   })
-               
+  
+  # fill out table for input history
+  userhist <- reactive({
+    #any reactive code that should re-run when trigger is fired
+    dbtrigger$depend()
+    dbGetQuery(con, 'SELECT prs, horm, bmi, smoking, drinking, age, imd from mytable')
+  })
+
+  observeEvent(input$go, {
+    #protects against SQL injection attacks
+    sql <- sqlInterpolate(con, 'INSERT INTO mytable ([prs], [horm], [bmi], [smoking], [drinking], [age], [imd]) VALUES (?prs, ?horm, ?bmi, ?smoking, ?drinking, ?age, ?imd)',
+                          prs = input$prs,
+                          horm = input$hormone,
+                          bmi = input$bmi,
+                          smoking = input$smoking,
+                          drinking = input$alc,
+                          age = input$age,
+                          imd = input$imd)
+    dbExecute(con, sql)
+    dbtrigger$trigger()
+  })
+
+  output$dbtable <- renderTable({
+    userhist()
+  })
+  
   pred <- eventReactive(input$go, {
     # req(input$bmi,
     #     input$age,
