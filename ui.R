@@ -106,7 +106,8 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "model",
             h2("Your predicted risk is: "),
-            h3(verbatimTextOutput("pred", placeholder = T)),
+            h3(verbatimTextOutput("pred", placeholder = T) %>% 
+                 shinycssloaders::withSpinner()),
             tags$head(tags$style("#pred{color: black;
                                  font-size: 20px;
                                  font-family: Source Sans Pro
