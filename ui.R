@@ -114,7 +114,11 @@ body <- dashboardBody(
             )
             ),
             flexdashboard::gaugeOutput("gauge"))),
-    tableOutput('dbtable'),
+    box(title = "Input History",
+        width = 12,
+        column(
+          tableOutput('dbtable'), align = "center", width = 12)
+      ),
     fluidRow(infoBox(
       "What", "is this model for?", icon = icon("line-chart"),
       width = 4
