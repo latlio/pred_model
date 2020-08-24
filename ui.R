@@ -5,6 +5,30 @@
 # Created: Wed Aug  5 15:35:47 2020 ------------------------------
 ################################################################################
 
+makereactivetrigger <- function() {
+  #programmed action button 
+  rv <- reactiveValues(a = 0)
+  list(
+    depend = function() {
+      rv$a
+      invisible()
+    },
+    trigger = function() {
+      rv$a <- isolate(rv$a + 1)
+    }
+  )
+}
+dbtrigger <- makereactivetrigger()
+
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+dbExecute(con, 'CREATE TABLE mytable (prs int,
+          horm varchar(10), 
+          bmi int, 
+          smoking varchar(10), 
+          drinking varchar(10), 
+          age int, 
+          imd int);')
+
 header <- dashboardHeader(title = "Demo Predictor",
                           tags$li(a(href = 'https://www.phpc.cam.ac.uk/ceu/',
                                     img(src = 'www/cambridge-logo.png',
@@ -26,12 +50,6 @@ hoverIcon <- function(title) {
     `data-placement` = "right",
     `title` = title
   )
-  )
-}
-
-resetUI <- function(id){
-  tagList(
-    actionButton(NS(id, "reset"), "Clear", style='padding:6px;width:80px')
   )
 }
 
@@ -77,7 +95,7 @@ sidebar <- dashboardSidebar(
                              div(style="display: inline-block;vertical-align:top; width: 100px;",
                                  actionButton("go", "Predict!")),
                              div(style="display: inline-block;vertical-align:top; width: 100px;",
-                                 resetUI("test"))
+                                 actionButton("reset", "Clear", style='padding:6px;width:80px'))
     )),
     menuItem("Source Code", icon = icon("file-code-o"),
              href = "https://github.com/latlio/pred_model")
@@ -95,47 +113,37 @@ body <- dashboardBody(
                                  }"
             )
             ),
-            flexdashboard::gaugeOutput("gauge"),
-            br(),
-            br(),
-            br(),
-            br(),
-            br(),
-            br(),
-            br(),
-            br(),
-            br(),
-            br(),
-            fluidRow(infoBox(
-              "What", "is this model for?", icon = icon("line-chart"),
-              width = 4
-            ),
-            infoBox(
-              "Who", "is this model for?", icon = icon("user-friends"),
-              width = 4
-            ),
-            infoBox(
-              "Where", "can I find out more?", icon = icon("book-open"),
-              width = 4
-            )),
-            fluidRow(
-              column(align = "center",
-                     "This model asks for some details from the patient. It then uses data about the survival of similar women in the past to show the risk of coronary artery disease.",
-                     width = 4
-              ),
-              column(
-                align = "center",
-                "This model is for clinicians, patients, and their families.",
-                width = 4
-              ),
-              column(
-                align = "center",
-                "To read more visit:",
-                width = 4
-              ))
-    )
-  )
+            flexdashboard::gaugeOutput("gauge"))),
+    tableOutput('dbtable'),
+    fluidRow(infoBox(
+      "What", "is this model for?", icon = icon("line-chart"),
+      width = 4
+    ),
+    infoBox(
+      "Who", "is this model for?", icon = icon("user-friends"),
+      width = 4
+    ),
+    infoBox(
+      "Where", "can I find out more?", icon = icon("book-open"),
+      width = 4
+    )),
+    fluidRow(
+      column(align = "center",
+             "This model asks for some details from the patient. It then uses data about the survival of similar women in the past to show the risk of coronary artery disease.",
+             width = 4
+      ),
+      column(
+        align = "center",
+        "This model is for clinicians, patients, and their families.",
+        width = 4
+      ),
+      column(
+        align = "center",
+        "To read more visit:",
+        width = 4
+      ))
 )
+
 ui <- dashboardPage(header, 
                     sidebar, 
                     body, 
