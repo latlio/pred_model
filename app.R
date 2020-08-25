@@ -7,6 +7,7 @@
 
 library(shiny)
 library(shinydashboard)
+library(shinycssloaders)
 library(shinyjs)
 library(flexdashboard)
 library(rsconnect)
