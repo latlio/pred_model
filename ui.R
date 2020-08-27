@@ -42,14 +42,14 @@ convertMenuItem <- function(mi,tabName) {
   mi$children[[1]]$attribs['data-value'] = "tabName"
   mi
 }
+
 hoverIcon <- function(title) {
   quo(
   tags$style(
     class = "fa fa-info-circle", 
     `data-toggle` = "tooltip",
     `data-placement` = "right",
-    `title` = title
-  )
+    `title` = title)
   )
 }
 
@@ -57,14 +57,14 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     convertMenuItem(menuItem("Predict!", tabName = "model", icon = icon("bar-chart-o"),
                              sliderInput("prs",
-                                        list(icon = rlang::eval_tidy(
-                                          hoverIcon("Standardized coronary artery disease polygenic risk score.")
-                                        ),
-                                        "Standardized PRS"),
+                                         list(icon = rlang::eval_tidy(
+                                           hoverIcon("Standardized coronary artery disease polygenic risk score.")
+                                         ),
+                                         "Standardized PRS"),
                                          value = 0,
                                          min = -4,
                                          max = 4
-                                         ),
+                             ),
                              selectInput("hormone",
                                          list(icon = rlang::eval_tidy(
                                            hoverIcon("Have you received tamoxifen in the past?")
@@ -110,49 +110,44 @@ body <- dashboardBody(
             tags$head(tags$style("#pred{color: black;
                                  font-size: 20px;
                                  font-family: Source Sans Pro
-                                 }"
-            )
+                                 }")
             ),
             flexdashboard::gaugeOutput("gauge"))),
-    box(title = "Input History",
-        width = 12,
-        column(
-          tableOutput('dbtable'), align = "center", width = 12)
-      ),
-    fluidRow(infoBox(
-      "What", "is this model for?", icon = icon("line-chart"),
+  box(title = "Input History",
+      width = 12,
+      column(
+        tableOutput('dbtable'), align = "center", width = 12)
+  ),
+  fluidRow(infoBox(
+    "What", "is this model for?", icon = icon("line-chart"),
+    width = 4
+  ),
+  infoBox(
+    "Who", "is this model for?", icon = icon("user-friends"),
+    width = 4
+  ),
+  infoBox(
+    "Where", "can I find out more?", icon = icon("book-open"),
+    width = 4
+  )),
+  fluidRow(
+    column(align = "center",
+           "This model asks for some details from the patient. It then uses data about the survival of similar women in the past to show the risk of coronary artery disease.",
+           width = 4
+    ),
+    column(
+      align = "center",
+      "This model is for clinicians, patients, and their families.",
       width = 4
     ),
-    infoBox(
-      "Who", "is this model for?", icon = icon("user-friends"),
+    column(
+      align = "center",
+      "To read more visit:",
       width = 4
-    ),
-    infoBox(
-      "Where", "can I find out more?", icon = icon("book-open"),
-      width = 4
-    )),
-    fluidRow(
-      column(align = "center",
-             "This model asks for some details from the patient. It then uses data about the survival of similar women in the past to show the risk of coronary artery disease.",
-             width = 4
-      ),
-      column(
-        align = "center",
-        "This model is for clinicians, patients, and their families.",
-        width = 4
-      ),
-      column(
-        align = "center",
-        "To read more visit:",
-        width = 4
-      ))
+    ))
 )
 
 ui <- dashboardPage(header, 
                     sidebar, 
                     body, 
-                    useShinyjs()
-                    )
-
-
-
+                    useShinyjs())

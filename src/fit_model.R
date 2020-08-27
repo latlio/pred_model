@@ -34,6 +34,8 @@ fit <- coxph(Surv(YearsToEntry,
                log(BMI) + as.factor(smokingEver) + AlcNow + DiagnosisAge + log(IMD),
              data)
 
+saveRDS(fit, "model.RDS")
+
 coefs <- fit %>%
   broom::tidy() %>%
   select(term, estimate)

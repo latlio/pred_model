@@ -60,8 +60,8 @@ server <- function(input, output, session) {
       need(input$bmi, "Input a BMI!"),
       need(input$age, "Input an age!"),
       need(str_detect(input$bmi, "[a-zA-Z]*"), "Input a number for BMI!"),
-      need(str_detect(input$age, "[a-zA-Z]*"), "Input a number for age!")
-    )
+      need(str_detect(input$age, "[a-zA-Z]*"), "Input a number for age!"))
+    
     newdata <- tibble(prs_z = input$prs,
                       HormoneTherapy = input$hormone,
                       BMI = input$bmi,
@@ -83,10 +83,12 @@ server <- function(input, output, session) {
         AlcNow == "Yes" ~ 1
       )) %>%
       mutate_all(as.numeric)
+    
     pred <- predict(fit, newdata = newdata, type = "risk")
     pred <- round(pred, 2)
     paste0(pred)
   })
+  
   output$pred <- renderText(ifelse(is.na(pred()), 
                                    print("Make sure age and BMI are numbers."), 
                                    pred()))
